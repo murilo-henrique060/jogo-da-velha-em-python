@@ -2,26 +2,6 @@ import pygame
 
 #Constantes do Jogo
 
-#Posição dos Quadrados
-POS1 = [(0,0),(191,191)]
-POS2 = [(205,0),(396,191)]
-POS3 = [(409,0),(600,191)]
-POS4 = [(0,205),(191,396)]
-POS5 = [(205,205),(396,396)]
-POS6 = [(409,205),(600,396)]
-POS7 = [(0,409),(191,600)]
-POS8 = [(205,409),(396,600)]
-POS9 = [(409,409),(600,600)]
-
-janela.blit(X,(409,409))
-    janela.blit(O,(205,409))
-    janela.blit(X,(0,409))
-    janela.blit(O,(409,205))
-    janela.blit(X,(205,205))
-    janela.blit(O,(0,205))
-    janela.blit(X,(409,0))
-    janela.blit(O,(205,0))
-    janela.blit(X,(0,0))
 #Janela
 LARGURA_JANELA = 600
 ALTURA_JANELA = 600
@@ -32,20 +12,52 @@ ICONE = pygame.transform.scale(pygame.image.load('C:\\Users\\Ivone\\Desktop\\jog
 X = pygame.image.load('C:\\Users\\Ivone\\Desktop\\jogo-da-velha-em-python\\jogo da velha\\imagens\\x.png')
 O = pygame.image.load('C:\\Users\\Ivone\\Desktop\\jogo-da-velha-em-python\\jogo da velha\\imagens\\0.png')
 
-pos1 = 0
-pos2 = 0
-pos3 = 0
-pos4 = 0
-pos5 = 0
-pos6 = 0
-pos7 = 0
-pos8 = 0
-pos9 = 0
+#Posição dos Quadrados
+listapos = [
+            [[0,0],[191,191],0],
+            [[205,0],[396,191],0],
+            [[409,0],[600,191],0],
+            [[0,205],[191,396],0],
+            [[205,205],[396,396],0],
+            [[409,205],[600,396],0],
+            [[0,409],[191,600],0],
+            [[205,409],[396,600],0],
+            [[409,409],[600,600],0]
+]
+
+valor = 0
+
+lista = []
+listaDesenhar = []
+listasimb = [(1,X),(-1,O)]
+
+simbval = listasimb[valor][0]
+simb = listasimb[valor][1]
 
 #Funçoes
 
-def atualizar():
-    pygame.display.update()
+def desenhar(simbval,simb,POS,lista,valor,listasimb):
+    mousepos = pygame.mouse.get_pos()
+    for num in range(0,9):
+        if mousepos[0] >= POS[num][0][0] and mousepos[1] >= POS[num][0][1] and mousepos[1] <= POS[num][1][1] and mousepos[0] <= POS[num][1][0] and POS[num][2] == 0:
+            
+            POS[num][2] = simbval
+            lista.append([simb])
+            lista[-1].append(POS[num][0][0])
+            lista[-1].append(POS[num][0][1])
+            
+            #Modificando o símbolo
+            valor = (valor + 1) % 2
+            simbval = listasimb[valor][0]
+            simb = listasimb[valor][1]
+
+    return lista,POS,simbval,simb,valor
+
+def desenharFigura(lista,listaDesenhar):
+    for opcoes in lista:
+        if opcoes not in listaDesenhar:
+            listaDesenhar.append(opcoes)
+        janela.blit(opcoes[0],(opcoes[1],opcoes[2]))
 
 #Criando a Janela
 janela = pygame.display.set_mode((LARGURA_JANELA,ALTURA_JANELA))
@@ -61,11 +73,27 @@ while deve_continuar:
         if evento.type == pygame.QUIT:
             deve_continuar = False
         if evento.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            print(mouse_pos[0])
+            lista, listapos, simbval, simb, valor = desenhar(simbval,simb,listapos,lista,valor,listasimb)
+
+    #Verificando a derrota
+    n1 = listapos[0][2]
+    n2 = listapos[1][2]
+    n3 = listapos[2][2]
+    n4 = listapos[3][2]
+    n5 = listapos[4][2]
+    n6 = listapos[5][2]
+    n7 = listapos[6][2]
+    n8 = listapos[7][2]
+    n9 = listapos[8][2]
+
+    if n1 + n2 + n3 == 3 or n1 + n2 + n3 == -3:
+        print(f'O Vencedor Foi: {"X" if n1 + n2 + n3 == 3 else "O"}')
 
     #Desenhando o Fundo
     janela.blit(FUNDO,(0,0))
 
+    #Desenhando as figuras
+    desenharFigura(lista,listaDesenhar)
+
     #Atualizando o jogo:
-    atualizar()
+    pygame.display.update()
