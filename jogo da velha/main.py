@@ -86,8 +86,32 @@ while deve_continuar:
     n8 = listapos[7][2]
     n9 = listapos[8][2]
 
-    if n1 + n2 + n3 == 3 or n1 + n2 + n3 == -3:
-        print(f'O Vencedor Foi: {"X" if n1 + n2 + n3 == 3 else "O"}')
+    v1 = n1 + n2 + n3
+    v2 = n4 + n5 + n6
+    v3 = n7 + n8 + n9
+    v4 = n1 + n4 + n7
+    v5 = n2 + n5 + n8
+    v6 = n3 + n6 + n9
+    v7 = n1 + n5 + n9
+    v8 = n3 + n5 + n7
+
+    vitorias = [v1,v2,v3,v4,v5,v6,v7,v8]
+
+    for vitoria in vitorias:
+        if vitoria == 3 or vitoria == -3 or len(lista) == 9:
+            if vitoria == 3 or vitoria == -3:
+                print(f'O Vencedor Foi: {"X" if vitoria == 3 else "O"}')
+            elif len(lista) == 9:
+                print('empate')
+            for pos in listapos:
+                pos[2] = 0
+                valor = 0
+                lista = []
+                listaDesenhar = []
+
+                simbval = listasimb[valor][0]
+                simb = listasimb[valor][1]
+
 
     #Desenhando o Fundo
     janela.blit(FUNDO,(0,0))
