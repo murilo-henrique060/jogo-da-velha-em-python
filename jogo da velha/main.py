@@ -36,6 +36,17 @@ simb = listasimb[valor][1]
 
 #Funçoes
 
+def reset(listapos,valor,lista,listaDesenhar,listasimb,simbval,simb):
+    for pos in listapos:
+        pos[2] = 0
+    valor = 0
+    lista.clear()
+    listaDesenhar.clear()
+
+    simbval = listasimb[valor][0]
+    simb = listasimb[valor][1]
+    return listapos,valor,lista,listaDesenhar,listasimb,simbval,simb
+
 def desenhar(simbval,simb,POS,lista,valor,listasimb):
     mousepos = pygame.mouse.get_pos()
     for num in range(0,9):
@@ -86,6 +97,8 @@ while deve_continuar:
     n8 = listapos[7][2]
     n9 = listapos[8][2]
 
+    nvitoria = 0
+
     v1 = n1 + n2 + n3
     v2 = n4 + n5 + n6
     v3 = n7 + n8 + n9
@@ -98,20 +111,14 @@ while deve_continuar:
     vitorias = [v1,v2,v3,v4,v5,v6,v7,v8]
 
     for vitoria in vitorias:
-        if vitoria == 3 or vitoria == -3 or len(lista) == 9:
-            if vitoria == 3 or vitoria == -3:
-                print(f'O Vencedor Foi: {"X" if vitoria == 3 else "O"}')
-            elif len(lista) == 9:
-                print('empate')
-            for pos in listapos:
-                pos[2] = 0
-                valor = 0
-                lista = []
-                listaDesenhar = []
+        if vitoria == 3 and nvitoria == 0 or vitoria == -3 and nvitoria == 0:
+            print(f'O Vencedor Foi: {"X" if vitoria == 3 else "O"}')
+            nvitoria += 1
+            listapos,valor,lista,listaDesenhar,listasimb,simbval,simb = reset(listapos,valor,lista,listaDesenhar,listasimb,simbval,simb)
 
-                simbval = listasimb[valor][0]
-                simb = listasimb[valor][1]
-
+    if len(lista) == 9 and nvitoria == 0:
+        nvitoria += 1
+        listapos,valor,lista,listaDesenhar,listasimb,simbval,simb = reset(listapos,valor,lista,listaDesenhar,listasimb,simbval,simb)
 
     #Desenhando o Fundo
     janela.blit(FUNDO,(0,0))
