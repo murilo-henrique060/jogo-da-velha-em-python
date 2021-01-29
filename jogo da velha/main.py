@@ -19,6 +19,17 @@ DIMENSAO_JANELA = (LARGURA_JANELA, ALTURA_JANELA)
 FUNDO = pygame.transform.scale(pygame.image.load('C:\\Users\\Ivone\\Desktop\\jogo-da-velha-em-python\\jogo da velha\\imagens\\fundo.png'), DIMENSAO_JANELA)
 ICONE = pygame.transform.scale(pygame.image.load('C:\\Users\\Ivone\\Desktop\\jogo-da-velha-em-python\\jogo da velha\\imagens\\icone.png'), (96, 96))
 
+#Tela Inicial
+Tela_Inicial = pygame.transform.scale(pygame.image.load('C:\\Users\\Ivone\\Desktop\\jogo-da-velha-em-python\\jogo da velha\\imagens\\Jogo da Velha.png'), DIMENSAO_JANELA)
+
+#Tela Semi Tranparente:
+Tela_Transparente = pygame.Surface(DIMENSAO_JANELA)
+Tela_Transparente.fill((0, 0, 0))
+Tela_Transparente.set_alpha(200)
+
+#Variável Que Define Se Deve Mostrar a Tela Inicial
+Mostrar_Tela_Inicial = True
+
 #Fundo
 TAMANHO_LINHA = round((4 * LARGURA_JANELA) / 200)
 
@@ -107,14 +118,15 @@ NUMERO_8 = pygame.transform.scale(pygame.image.load('C:\\Users\\Ivone\\Desktop\\
 NUMERO_9 = pygame.transform.scale(pygame.image.load('C:\\Users\\Ivone\\Desktop\\jogo-da-velha-em-python\\jogo da velha\\imagens\\numero (9).png'), DIMENSAO_NUMERO)
 
 #Posições Números
-POSICAO_INICIAL_NUMERO_X = (round((167 * LARGURA_JANELA) / 200), round((204 * LARGURA_JANELA) / 200))
-POSICAO_INICIAL_NUMERO_O = (POSICAO_INICIAL_NUMERO_X[0], round((228 * LARGURA_JANELA) / 200))
+POSICAO_INICIAL_EIXO_X = round((167 * LARGURA_JANELA) / 200)
+POSICAO_INICIAL_NUMERO_X = [POSICAO_INICIAL_EIXO_X, round((204 * LARGURA_JANELA) / 200)]
+POSICAO_INICIAL_NUMERO_O = [POSICAO_INICIAL_EIXO_X, round((228 * LARGURA_JANELA) / 200)]
 
-#Números a serem desenhados
-Lista_Desenhar_Numero = []
+#Pontuação
+Pontuacao = [0,0]
 
 #Lista dos Números
-Lista_Numeros = [NUMERO_0, NUMERO_1, NUMERO_2, NUMERO_3, NUMERO_4, NUMERO_5, NUMERO_6, NUMERO_7, NUMERO_8, NUMERO_9]
+Lista_Numeros = (NUMERO_0, NUMERO_1, NUMERO_2, NUMERO_3, NUMERO_4, NUMERO_5, NUMERO_6, NUMERO_7, NUMERO_8, NUMERO_9)
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -136,11 +148,11 @@ Lista_Mini_Simbolo = [MINI_X, MINI_O]
 Mini_Simbolo = Lista_Mini_Simbolo[Vez]
 
 #Posições Mini Símbolos
-POSICAO_MINI_SIMBOLO = (round((116 * LARGURA_JANELA) / 200), POSICAO_INICIAL_NUMERO_X[1])
+POSICAO_MINI_SIMBOLO = [round((116 * LARGURA_JANELA) / 200), POSICAO_INICIAL_NUMERO_X[1]]
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-#Funçoes
+#Funções
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -149,13 +161,15 @@ POSICAO_MINI_SIMBOLO = (round((116 * LARGURA_JANELA) / 200), POSICAO_INICIAL_NUM
 def redefinir():
 
     #Chamando as Variáveis
-    global Lista_Posicao_Quadrados, Vez, Lista_Simbolos_Desenhados, Lista_Simbolos, Valor_Simbolo, Simbolo, Lista_Mini_Simbolo, Mini_Simbolo
+    global Lista_Posicao_Quadrados, Vez, Lista_Simbolos_Desenhados, Lista_Simbolos, Valor_Simbolo, Simbolo, Lista_Mini_Simbolo, Mini_Simbolo, Pontuacao
 
     #Redefinindo os Valores dos Símbolos Para Nulo
     for Posição in Lista_Posicao_Quadrados:
         Posição[2] = 0
 
-    #Definindo a Vez Inicial Para X
+    #Adicionando um Ponto Para O Vencedor
+
+    #Definindo a Vez Inicial Para a do X
     Vez = 0
 
     #Apagando os Símbolos Desenhados
@@ -173,27 +187,28 @@ def redefinir():
 def Clique():
 
     #Chamando as Váriaveis
-    global Valor_Simbolo, Simbolo, Lista_Posicao_Quadrados, Lista_Simbolos_Desenhados, Vez, Lista_Simbolos, Lista_Mini_Simbolo, Mini_Simbolo
+    global Valor_Simbolo, Simbolo, Lista_Posicao_Quadrados, Lista_Simbolos_Desenhados, Vez, Lista_Simbolos, Lista_Mini_Simbolo, Mini_Simbolo, Mostrar_Tela_Inicial
 
     #Identificando a Posição do Mouse
     mousepos = pygame.mouse.get_pos()
 
     #Verificando se o Jogador Cliquou na Área de Algum Quadrado
-    for num in range(0, 9):
-        if mousepos[0] >= Lista_Posicao_Quadrados[num][0][0] and mousepos[1] >= Lista_Posicao_Quadrados[num][0][1] and mousepos[1] <= Lista_Posicao_Quadrados[num][1][1] and mousepos[0] <= Lista_Posicao_Quadrados[num][1][0] and Lista_Posicao_Quadrados[num][2] == 0:
+    if Mostrar_Tela_Inicial == False:
+        for num in range(0, 9):
+            if mousepos[0] >= Lista_Posicao_Quadrados[num][0][0] and mousepos[1] >= Lista_Posicao_Quadrados[num][0][1] and mousepos[1] <= Lista_Posicao_Quadrados[num][1][1] and mousepos[0] <= Lista_Posicao_Quadrados[num][1][0] and Lista_Posicao_Quadrados[num][2] == 0:
 
-            #Modificando o Valor Do Simbolo Do Quadrado Cliquado
-            Lista_Posicao_Quadrados[num][2] = Valor_Simbolo
+                #Modificando o Valor Do Simbolo Do Quadrado Cliquado
+                Lista_Posicao_Quadrados[num][2] = Valor_Simbolo
 
-            #Adicionando um Símbolo a Ser Desenhado e a Posição em Que Vai Ser Desenhado
-            Lista_Simbolos_Desenhados.append([Simbolo])
-            Lista_Simbolos_Desenhados[-1].append((Lista_Posicao_Quadrados[num][0][0], Lista_Posicao_Quadrados[num][0][1]))
+                #Adicionando um Símbolo a Ser Desenhado e a Posição em Que Vai Ser Desenhado
+                Lista_Simbolos_Desenhados.append([Simbolo])
+                Lista_Simbolos_Desenhados[-1].append((Lista_Posicao_Quadrados[num][0][0], Lista_Posicao_Quadrados[num][0][1]))
 
-            #Atualizando a Vez, o Mini Símbolo, o Valor do Símbolo e o Símbolo
-            Vez = (Vez + 1) % 2
-            Mini_Simbolo = Lista_Mini_Simbolo[Vez]
-            Valor_Simbolo = Lista_Simbolos[Vez][0]
-            Simbolo = Lista_Simbolos[Vez][1]
+                #Atualizando a Vez, o Mini Símbolo, o Valor do Símbolo e o Símbolo
+                Vez = (Vez + 1) % 2
+                Mini_Simbolo = Lista_Mini_Simbolo[Vez]
+                Valor_Simbolo = Lista_Simbolos[Vez][0]
+                Simbolo = Lista_Simbolos[Vez][1]
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -213,7 +228,7 @@ def desenharSimbolo(Lista_Simbolos_Desenhados):
 def verificarDerrota():
 
     #Chamando as Variáveis
-    global Lista_Posicao_Quadrados, Lista_Simbolos_Desenhados
+    global Lista_Posicao_Quadrados, Lista_Simbolos_Desenhados, Valor_Simbolo, Pontuacao
 
     #Verificando a derrota
     n1 = Lista_Posicao_Quadrados[0][2]
@@ -242,7 +257,14 @@ def verificarDerrota():
 
     for Vitoria in Vitorias:
         if Vitoria == 3 and Contador_Derrota == 0 or Vitoria == -3 and Contador_Derrota == 0:
-            print(f'O Vencedor Foi: {"X" if Vitoria == 3 else "O"}')
+
+            #Se o X Ganhou:
+            if Valor_Simbolo * -1 == 1:
+                Pontuacao[0] += 1
+            
+            #Se o O Ganhou:
+            elif Valor_Simbolo * -1 == -1:
+                Pontuacao[1] += 1
 
             Contador_Derrota += 1
 
@@ -250,15 +272,13 @@ def verificarDerrota():
 
     if len(Lista_Simbolos_Desenhados) == 9 and Contador_Derrota == 0:
 
-        print('Empate')
-
         Contador_Derrota += 1
 
         redefinir()
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-#Desenhado os Objetoa
+#Desenhado os Objetos
 
 def Desenhar():
 
@@ -271,14 +291,48 @@ def Desenhar():
     #Desenhando as figuras
     desenharSimbolo(Lista_Simbolos_Desenhados)
 
+    #Desenhando o Contador
+    DesenharContador(Pontuacao[0], POSICAO_INICIAL_NUMERO_X, Lista_Numeros, LARGURA_NUMERO, POSICAO_INICIAL_EIXO_X)
+    DesenharContador(Pontuacao[1], POSICAO_INICIAL_NUMERO_O, Lista_Numeros, LARGURA_NUMERO, POSICAO_INICIAL_EIXO_X)
+    
     #Verificando a Derrota
     verificarDerrota()
+    
+    #Desenhando a Janela Inicial
+    TelaInicial()
 
     #Atualizando a Janlela
     pygame.display.update()
 
     #Definindo o FPS (Atualizações Por Segundo ou Frames Por Segundo)
     Relogio.tick(30)
+
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+#Criando e Desenhando o Contador de Pontos
+
+def DesenharContador(pontuacao, posicao_inicial, Lista_Numeros, Largura_Numero, Posicao_inicial_eixo_x):
+
+    #Transformando a Pontuação em String Para Poder Separar os Números
+    Pontuacao_String = str(pontuacao)
+
+    for numero in range(len(Pontuacao_String)):
+        
+        janela.blit(Lista_Numeros[int(Pontuacao_String[numero])],posicao_inicial)
+        posicao_inicial[0] += (Largura_Numero + 1)
+        
+    posicao_inicial[0] = Posicao_inicial_eixo_x
+
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+#Desenhando A Tela Inicial
+
+def TelaInicial():
+    global Tela_Inicial, Tela_Transparente, Mostrar_Tela_Inicial, janela
+
+    if Mostrar_Tela_Inicial:
+        janela.blit(Tela_Transparente, (0, 0))
+        janela.blit(Tela_Inicial, (0, 0))
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -289,5 +343,6 @@ while DEVE_CONTINUAR:
             DEVE_CONTINUAR = False
         if evento.type == pygame.MOUSEBUTTONDOWN:
             Clique()
+            Mostrar_Tela_Inicial = False
 
     Desenhar()
